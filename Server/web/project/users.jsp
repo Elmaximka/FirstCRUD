@@ -1,4 +1,4 @@
-<%@ page import="service.UserService" %>
+<%@ page import="main.java.service.UserService" %>
 <%@ page import="com.google.gson.Gson" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>

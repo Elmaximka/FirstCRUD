@@ -1,11 +1,10 @@
-package DAO;
+package main.java.DAO;
 
-import com.sun.java.accessibility.util.SwingEventMonitor;
-import model.User;
+import main.java.model.User;
+import main.java.util.DBHelper;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import util.DBHelper;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ public class UserHibernateDAO implements UserDAO {
     private final SessionFactory sessionFactory;
 
     public UserHibernateDAO() {
-        sessionFactory = DBHelper.getSessionFactory();
+        sessionFactory = DBHelper.instance().getSessionFactory();
     }
 
     @Override
@@ -54,7 +53,7 @@ public class UserHibernateDAO implements UserDAO {
     }
 
     @Override
-    public void addUser(User user) throws Throwable {
+    public void addUser(User user) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         session.save(user);

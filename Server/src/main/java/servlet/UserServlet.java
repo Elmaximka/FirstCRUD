@@ -1,6 +1,8 @@
-import service.UserService;
+package main.java.servlet;
+
+import main.java.service.UserService;
 import com.google.gson.Gson;
-import model.User;
+import main.java.model.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

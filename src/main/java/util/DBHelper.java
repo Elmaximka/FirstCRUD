@@ -1,13 +1,30 @@
-package util;
+package main.java.util;
 
-import model.User;
+import main.java.model.User;
+import main.java.service.UserService;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 
 public class DBHelper {
+    private static DBHelper dbHelper;
+
+    private DBHelper() {
+
+    }
+
+    public static DBHelper instance() {
+        if (dbHelper == null) {
+            dbHelper = new DBHelper();
+        }
+        return dbHelper;
+    }
 
     private static SessionFactory sessionFactory;
 
@@ -18,8 +35,30 @@ public class DBHelper {
         return sessionFactory;
     }
 
+    public static Connection getConnection() {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            StringBuilder url = new StringBuilder();
+
+            url.
+                    append("jdbc:mysql://").        //db type
+                    append("localhost:").           //host name
+                    append("3306/").                //port
+                    append("crud?").                //db name
+                    append("useUnicode=true&").     //unicode
+                    append("serverTimezone=Europe/Moscow");  // setTimeZone
+
+            return DriverManager.getConnection(url.toString(), "root", "root");
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new IllegalStateException(e);
+        }
+    }
+
     @SuppressWarnings("UnusedDeclaration")
-    private static Configuration getMySqlConfiguration() {
+    private static Configuration getConfiguration() {
         Configuration configuration = new Configuration();
         configuration.addAnnotatedClass(User.class);
 
@@ -34,7 +73,7 @@ public class DBHelper {
     }
 
     private static SessionFactory createSessionFactory() {
-        Configuration configuration = getMySqlConfiguration();
+        Configuration configuration = getConfiguration();
         StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder();
         builder.applySettings(configuration.getProperties());
         ServiceRegistry serviceRegistry = builder.build();

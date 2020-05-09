@@ -1,10 +1,9 @@
-package service;
+package main.java.service;
 
-import DAO.UserDAO;
-import DAO.UserHibernateDAO;
-import DAO.UserJdbcDAO;
-import model.User;
-import util.Connect;
+import main.java.DAO.UserDAO;
+import main.java.DAO.UserHibernateDAO;
+import main.java.DAO.UserJdbcDAO;
+import main.java.model.User;
 
 import java.util.List;
 

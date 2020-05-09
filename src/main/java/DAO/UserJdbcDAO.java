@@ -1,7 +1,7 @@
-package DAO;
+package main.java.DAO;
 
-import model.User;
-import util.Connect;
+import main.java.model.User;
+import main.java.util.DBHelper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,7 +14,7 @@ public class UserJdbcDAO implements UserDAO {
     private final Connection connection;
 
     public UserJdbcDAO() {
-        connection = Connect.getMysqlConnection();
+        connection = DBHelper.instance().getConnection();
     }
 
     public boolean deleteUser(String name) {
