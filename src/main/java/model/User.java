@@ -8,7 +8,7 @@ public class User {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @Column(name = "name")
@@ -20,21 +20,34 @@ public class User {
     @Column(name = "gender")
     private String gender;
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    @Column(name = "role")
+    String role;
+
     public User(){
 
     }
 
-    public User(long id, String name, String password, String gender) {
+    public User(long id, String name, String password, String gender, String role) {
         this.id = id;
         this.name = name;
         this.password = password;
         this.gender = gender;
+        this.role = role;
     }
 
-    public User(String name, String password, String gender) {
+    public User(String name, String password, String gender, String role) {
         this.name = name;
         this.password = password;
         this.gender = gender;
+        this.role = role;
     }
 
     public void setId(long id) {

@@ -24,7 +24,7 @@ public class UserHibernateDAO implements UserDAO {
                     .setParameter("name", name)
                     .executeUpdate();
             return true;
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return false;
         } finally {
             transaction.commit();
@@ -39,7 +39,11 @@ public class UserHibernateDAO implements UserDAO {
                 .setParameter("name", name)
                 .list();
         session.close();
-        return list.get(0);
+        try {
+            return list.get(0);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
 
     }
 
@@ -65,7 +69,8 @@ public class UserHibernateDAO implements UserDAO {
     public void createTable() {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
-        session.createSQLQuery("drop table users").executeUpdate();
+        session.createSQLQuery("create table if not exists users (id bigint not null auto_increment, name varchar(255), password varchar(255), gender varchar(255), role varchar(256), primary key (id))")
+                .executeUpdate();
         transaction.commit();
         session.close();
     }
@@ -74,8 +79,7 @@ public class UserHibernateDAO implements UserDAO {
     public void dropTable() {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
-        session.createSQLQuery("create table cars (id bigint not null auto_increment, name varchar(255), password varchar(255), gender varchar(255), primary key (id))")
-                .executeUpdate();
+        session.createSQLQuery("drop table users").executeUpdate();
         transaction.commit();
         session.close();
     }

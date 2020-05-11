@@ -1,20 +1,17 @@
 package main.java.service;
 
 import main.java.DAO.UserDAO;
-import main.java.DAO.UserHibernateDAO;
-import main.java.DAO.UserJdbcDAO;
+import main.java.factory.UserDaoFactory;
 import main.java.model.User;
 
 import java.util.List;
 
 public class UserService {
     private static UserService instance;
-    private static UserDAO userHibernateDAO;
-    private static UserDAO userJdbcDAO;
+    private static UserDAO userDao;
 
     private UserService() {
-        userHibernateDAO = new UserHibernateDAO();
-        userJdbcDAO = new UserJdbcDAO();
+        userDao = UserDaoFactory.getUserDAO();
     }
 
     public static UserService instance() {
@@ -26,22 +23,22 @@ public class UserService {
 
 
     public User getUserByName(String name) {
-        return userJdbcDAO.getUserByName(name);
+        return userDao.getUserByName(name);
     }
 
     public List<User> getAllUsers() {
-        return userJdbcDAO.getAllUsers();
+        return userDao.getAllUsers();
     }
 
     public boolean deleteUser(String name) {
-        return userJdbcDAO.deleteUser(name);
+        return userDao.deleteUser(name);
     }
 
     public boolean addUser(User user) {
         try {
             if (user.getName() != null && user.getPassword() != null && user.getGender() != null) {
                 createTable();
-                userJdbcDAO.addUser(user);
+                userDao.addUser(user);
                 return true;
             }
         } catch (Throwable e) {
@@ -51,11 +48,11 @@ public class UserService {
     }
 
     public void cleanUp() {
-        userJdbcDAO.dropTable();
+        userDao.dropTable();
     }
 
     public void createTable() {
-        userJdbcDAO.createTable();
+        userDao.createTable();
     }
 
 

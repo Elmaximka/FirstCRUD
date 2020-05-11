@@ -1,59 +1,52 @@
 package main.java.servlet;
 
-import main.java.service.UserService;
 import com.google.gson.Gson;
 import main.java.model.User;
+import main.java.service.UserService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
-@WebServlet("/users/*")
+@WebServlet("/user")
 public class UserServlet extends HttpServlet {
+    Gson gson = new Gson();
     UserService userService = UserService.instance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Gson gson = new Gson();
-        resp.getWriter().println(gson.toJson(userService.getAllUsers()));
-        resp.setStatus(200);
-    }
-
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        userService.cleanUp();
-        doGet(req, resp);
+        getServletContext().getRequestDispatcher("/user/user.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getPathInfo().contains("post")) {
-            userService.addUser(new User(req.getParameter("name"), req.getParameter("password"), req.getParameter("gender")));
-        }
-        if (req.getPathInfo().contains("delete")) {
-            userService.deleteUser(req.getParameter("name"));
-        }
-        if (req.getPathInfo().contains("change")) {
+        try {
+            HttpSession session = req.getSession();
             User user = userService.getUserByName(req.getParameter("name"));
-            if (!req.getParameter("newName").equals("") && !req.getParameter("password").equals("")) {
-                user.setName(req.getParameter("newName"));
-                user.setPassword(req.getParameter("password"));
-            } else if (!req.getParameter("newName").equals("")) {
-                user.setName(req.getParameter("newName"));
-            } else if (!req.getParameter("password").equals("")) {
-                user.setPassword(req.getParameter("newName"));
+            User userSession = (User) session.getAttribute("role");
+            if (!(userSession == null)) {
+                session.removeAttribute("role");
             }
-            user.setGender(req.getParameter("gender"));
-            if (userService.getUserByName(req.getParameter("newName")) == null) {
-                userService.deleteUser(req.getParameter("name"));
+            session.setAttribute("role", user);
+
+            if (user.getRole().equalsIgnoreCase("admin") &&
+                    user.getPassword().equals(req.getParameter("password"))) {
+                resp.sendRedirect("/admin.jsp");
+            } else if (user.getPassword().equals(req.getParameter("password"))) {
+                resp.getWriter().write(gson.toJson(user));
+                resp.setStatus(200);
             } else {
-                resp.getWriter().println("Unavailiable name, try another name");
+                resp.getWriter().println("No such User registered or password is incorrect");
             }
-            userService.addUser(user);
+        } catch (NoSuchElementException e) {
+            resp.getWriter().write("No such User registered");
+            resp.setStatus(404);
         }
-        doGet(req, resp);
     }
+
 }

@@ -17,7 +17,7 @@ public class UserDaoFactory {
         FileInputStream fis;
 
         try {
-            fis = new FileInputStream("src/main/resources/config.properties");
+            fis = new FileInputStream("C:\\Users\\Максим\\IdeaProjects\\FirstCRUD\\src\\main\\resources\\config.properties");
             properties.load(fis);
             String daotype = properties.getProperty("daotype");
             if (daotype.equalsIgnoreCase("UserHibernateDAO")) {

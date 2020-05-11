@@ -35,7 +35,7 @@ public class UserJdbcDAO implements UserDAO {
             ResultSet res = st.executeQuery();
             res.next();
             return new User(res.getString("name"),
-                    res.getString("password"), res.getString("gender"));
+                    res.getString("password"), res.getString("gender"), res.getString("role"));
         } catch (SQLException e) {
             return null;
         }
@@ -47,7 +47,8 @@ public class UserJdbcDAO implements UserDAO {
             ResultSet res = ps.executeQuery();
             while (res.next()) {
                 list.add(new User(res.getLong("id"), res.getString("name"),
-                        res.getString("password"), res.getString("gender")));
+                        res.getString("password"), res.getString("gender"),
+                        res.getString("role")));
             }
             res.close();
             return list;
@@ -61,6 +62,7 @@ public class UserJdbcDAO implements UserDAO {
         String name = user.getName();
         String password = user.getPassword();
         String gender = user.getGender();
+        String role = user.getRole();
         try (PreparedStatement sq = connection.prepareStatement("select name from users where name='" + name + "'")) {
             ResultSet res = sq.executeQuery();
             res.next();
@@ -70,8 +72,8 @@ public class UserJdbcDAO implements UserDAO {
         } catch (SQLException eq) {
             eq.printStackTrace();
         }
-        try (PreparedStatement st = connection.prepareStatement("insert into users(name, password, gender)" +
-                " values ('" + name + "','" + password + "','" + gender + "')")) {
+        try (PreparedStatement st = connection.prepareStatement("insert into users(name, password, gender, role)" +
+                " values ('" + name + "','" + password + "','" + gender + "', '" + role + "')")) {
             st.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -80,7 +82,7 @@ public class UserJdbcDAO implements UserDAO {
 
     public void createTable() {
         try (PreparedStatement stmt = connection.prepareStatement("create table if not exists users (id bigint auto_increment, name varchar(256)," +
-                " password varchar(256), gender varchar(256), primary key (id))")) {
+                " password varchar(256), gender varchar(256), role varchar(256), primary key (id))")) {
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

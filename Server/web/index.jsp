@@ -1,16 +1,19 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Максим
-  Date: 03.05.2020
-  Time: 19:55
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
   <head>
-    <title>$Title$</title>
+    <title>Login Page</title>
   </head>
   <body>
-  $END$
+  Login
+  <form action="${pageContext.request.contextPath}/user" method="post">
+    Name: <label>
+    <input type="text" name="name"/>
+  </label>
+    Password: <label>
+    <input type="password" name="password"/>
+  </label>
+    <input type="submit" name="Login">
+  </form>
   </body>
 </html>
